@@ -5,25 +5,11 @@ import Hero from '@app/components/sections/Hero';
 
 const locations: LocationProps[] = [
   {
-    title: 'Barrio South Lamar',
-    addressLines: ['1105 S. Lamar Blvd', 'Austin, TX 78704'],
-    phone: '(512) 906-0010',
-    hours: ['Open Daily — 7am to 7pm'],
+    title: 'Main Office',
+    addressLines: ['675 Town Square Blvd, Building 1A, Suite 200, PMB 530', 'Garland, TX 75040'],
+    phone: '(469) 421-6049',
+    hours: ['Shop · Read ⇒ 24 hours a day'],
     imageUrl: '/assets/images/location-1.png',
-  },
-  {
-    title: 'Barrio Sonterra',
-    addressLines: ['700 E. Sonterra Blvd. Suite #1113', 'San Antonio, TX 78258'],
-    phone: '(210) 530-8740',
-    hours: ['Mon thru Fri — 6am to 7pm', 'Sat — 7am to 7pm', 'Sun — 7am to 6pm'],
-    imageUrl: '/assets/images/location-2.png',
-  },
-  {
-    title: 'Barrio Deep Ellum',
-    addressLines: ['2369 Main Street', 'Dallas, TX 75226'],
-    phone: '(469) 248-3440',
-    hours: ['Sun thru Thu — 7am to 7pm', 'Fri thru Sat — 7am to 8pm'],
-    imageUrl: '/assets/images/location-3.png',
   },
 ];
 

@@ -2,10 +2,7 @@ import { BaseAddress, StoreDTO } from '@medusajs/types';
 import { BasePaymentSession } from '@medusajs/types/dist/http/payment/common';
 import { PaymentMethod as StripePaymentMethod } from '@stripe/stripe-js';
 
-export enum NavigationItemLocation {
-  header = 'header',
-  footer = 'footer',
-}
+export type NavigationItemLocation = 'main' | 'submenu' | 'footer';
 
 export interface NavigationItem {
   id: number;
@@ -14,6 +11,8 @@ export interface NavigationItem {
   new_tab: boolean;
   location: NavigationItemLocation;
   sort_order: number;
+  submenu?: NavigationItem[];
+  highlight?: boolean;
 }
 
 export type NavigationCollection = NavigationItem[];
