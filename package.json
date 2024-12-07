@@ -22,12 +22,13 @@
   "engines": {
     "node": ">=20"
   },
-  "packageManager": "yarn@4.5.0",
+  "packageManager": "yarn@4.5.3",
   "workspaces": [
     "apps/*",
     "packages/*"
   ],
   "dependencies": {
+    "@medusajs/medusa-js": "^6.1.9",
     "@sentry/core": "^8.42.0",
     "@sentry/react": "^8.42.0",
     "@sentry/remix": "^8.42.0"

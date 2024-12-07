@@ -15,27 +15,27 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        display: ['Breamcatcher', 'serif'],
+        display: ['var(--font-display)'],
         body: ['var(--font-body)'],
-        sans: ['Crimson Text', 'system-ui', 'sans-serif'],
-        breamcatcher: ['Breamcatcher', 'serif'],
+        sans: ['var(--font-body)'],
+        ballet: ['Ballet'],
         italiana: ['Italiana'],
         sen: ['Sen'],
         aboreto: ['Aboreto'],
-        serif: ['EB Garamond', 'Georgia', 'serif'],
       },
       colors: {
         primary: {
-          DEFAULT: '#8A0707',
-          50: '#F5F0E1',
-          100: '#D8C3A5',
-          200: '#C4A484',
-          600: '#8A0707',
-          700: {
-            DEFAULT: '#1C1C1E',
-            rgb: '28, 28, 30'
-          },
-          800: '#1E3A5F',
+          DEFAULT: 'rgb(var(--color-primary-DEFAULT) / <alpha-value>)',
+          50: 'rgb(var(--color-primary-50) / <alpha-value>)',
+          100: 'rgb(var(--color-primary-100) / <alpha-value>)',
+          200: 'rgb(var(--color-primary-200) / <alpha-value>)',
+          300: 'rgb(var(--color-primary-300) / <alpha-value>)',
+          400: 'rgb(var(--color-primary-400) / <alpha-value>)',
+          500: 'rgb(var(--color-primary-500) / <alpha-value>)',
+          600: 'rgb(var(--color-primary-600) / <alpha-value>)',
+          700: 'rgb(var(--color-primary-700) / <alpha-value>)',
+          800: 'rgb(var(--color-primary-800) / <alpha-value>)',
+          900: 'rgb(var(--color-primary-900) / <alpha-value>)',
         },
         accent: {
           DEFAULT: 'rgb(var(--color-accent-DEFAULT) / <alpha-value>)',
@@ -92,49 +92,6 @@ module.exports = {
         15: '15',
         16: '16',
       },
-      typography: {
-        DEFAULT: {
-          css: {
-            'h2': {
-              color: 'var(--tw-prose-headings)',
-              fontWeight: '600',
-              fontSize: '1.875rem',
-              marginTop: '2.5rem',
-              marginBottom: '1.25rem',
-            },
-            'h3': {
-              color: 'var(--tw-prose-headings)',
-              fontWeight: '600',
-              fontSize: '1.5rem',
-              marginTop: '2rem',
-              marginBottom: '1rem',
-            },
-            'p': {
-              marginBottom: '1.5rem',
-            },
-            '.lead': {
-              fontSize: '1.25rem',
-              lineHeight: '1.75rem',
-              color: 'var(--tw-prose-lead)',
-            },
-            'figure': {
-              marginTop: '2.5rem',
-              marginBottom: '2.5rem',
-            },
-            'figure > img': {
-              marginTop: '0',
-              marginBottom: '0',
-            },
-            'figcaption': {
-              fontSize: '0.875rem',
-              lineHeight: '1.25rem',
-              marginTop: '0.75rem',
-              textAlign: 'center',
-              color: 'var(--tw-prose-captions)',
-            },
-          }
-        }
-      }
     },
   },
   plugins: [

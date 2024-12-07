@@ -1,32 +1,44 @@
 /**
- * Converts javascript arrays and objects to FormData
- * @param data
- * @param formData
- * @param parentKey
- * @returns
+ * Converts a JavaScript object into FormData
+ * @param obj - The object to convert
+ * @param formData - Optional existing FormData instance to append to
+ * @param parentKey - Optional parent key for nested objects
+ * @returns FormData object containing all the object's data
  */
-export const convertToFormData = (data: any, formData: FormData = new FormData(), parentKey = ''): FormData => {
-  if (data === null || data === undefined) return formData;
+export function objectToFormData(
+  obj: Record<string, any>,
+  formData: FormData = new FormData(),
+  parentKey: string = ''
+): FormData {
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      const value = obj[key];
+      const formKey = parentKey ? `${parentKey}[${key}]` : key;
 
-  if (typeof data === 'object' && !(data instanceof Date) && !(data instanceof File)) {
-    Object.entries(data).forEach(([key, value]) => {
-      convertToFormData(
-        value,
-        formData,
-        !parentKey ? key : data[key] instanceof File ? parentKey : `${parentKey}[${key}]`,
-      );
-    });
-    return formData;
+      if (value === null || value === undefined) {
+        continue;
+      }
+
+      if (value instanceof Date) {
+        formData.append(formKey, value.toISOString());
+      } else if (value instanceof File || value instanceof Blob) {
+        formData.append(formKey, value);
+      } else if (Array.isArray(value)) {
+        value.forEach((item, index) => {
+          const arrayKey = `${formKey}[${index}]`;
+          if (typeof item === 'object' && !(item instanceof File || item instanceof Blob)) {
+            objectToFormData(item, formData, arrayKey);
+          } else {
+            formData.append(arrayKey, item);
+          }
+        });
+      } else if (typeof value === 'object') {
+        objectToFormData(value, formData, formKey);
+      } else {
+        formData.append(formKey, String(value));
+      }
+    }
   }
-
-  if (Array.isArray(data)) {
-    data.forEach((value, index) => {
-      convertToFormData(value, formData, `${parentKey}[${index}]`);
-    });
-    return formData;
-  }
-
-  formData.append(parentKey, data);
 
   return formData;
-};
+}

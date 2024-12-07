@@ -1,11 +1,13 @@
+import { type ActionHandler, handleAction } from '@libs/util/handleAction.server';
 import { getVariantBySelectedOptions } from '@libs/util/products';
 import { setCartId } from '@libs/util/server/cookies.server';
 import { addToCart, deleteLineItem, retrieveCart, updateLineItem } from '@libs/util/server/data/cart.server';
 import { getProductsById } from '@libs/util/server/data/products.server';
 import { getSelectedRegion } from '@libs/util/server/data/regions.server';
 import { FormValidationError } from '@libs/util/validation/validation-error';
-import { StoreCart, StoreCartResponse, CartCreateLineItemInput } from '@medusajs/types';
-import { ActionFunctionArgs, json } from '@remix-run/node';
+import { StoreCart, StoreCartResponse } from '@medusajs/types';
+import type { ActionFunctionArgs } from '@remix-run/node';
+import { data as remixData } from '@remix-run/node';
 import { withYup } from '@remix-validated-form/with-yup';
 import * as Yup from 'yup';
 
@@ -14,109 +16,105 @@ export const addCartItemValidation = withYup(
     productId: Yup.string().required(),
     options: Yup.object().default({}),
     quantity: Yup.number().required(),
-    edition: Yup.string().required('Please select an edition'),
   }),
 );
 
 export enum LineItemActions {
-  CREATE = 'create',
-  UPDATE = 'update',
-  DELETE = 'delete',
+  CREATE = 'createItem',
+  UPDATE = 'updateItem',
+  DELETE = 'deleteItem',
 }
 
-export async function action({ request }: ActionFunctionArgs) {
-  const formData = await request.formData();
-  const subaction = formData.get('subaction') as LineItemActions;
+export interface CreateLineItemPayLoad {
+  cartId: string;
+  productId: string;
+  options: { [key: string]: string };
+  quantity: string;
+}
 
-  switch (subaction) {
-    case LineItemActions.CREATE: {
-      const productId = formData.get('productId') as string;
-      const edition = formData.get('edition') as string;
-      const quantity = Number(formData.get('quantity') || 1);
-      const options: Record<string, string> = {};
+export interface UpdateLineItemRequestPayload {
+  cartId: string;
+  lineItemId: string;
+  quantity: string;
+}
 
-      // Collect all options.* fields
-      for (const [key, value] of formData.entries()) {
-        if (key.startsWith('options.')) {
-          options[key.replace('options.', '')] = value.toString();
-        }
-      }
+export interface DeleteLineItemRequestPayload {
+  cartId: string;
+  lineItemId: string;
+}
 
-      try {
-        const region = await getSelectedRegion(request.headers);
-        const [product] = await getProductsById({
-          ids: [productId],
-          regionId: region.id,
-        }).catch(() => []);
+export interface LineItemRequestResponse extends StoreCartResponse {}
 
-        if (!product) {
-          return json({ error: 'Product not found' }, { status: 404 });
-        }
+const createItem: ActionHandler<StoreCartResponse> = async (payload: CreateLineItemPayLoad, { request }) => {
+  const result = await addCartItemValidation.validate(payload);
 
-        const variant = getVariantBySelectedOptions(product.variants || [], options);
-        if (!variant) {
-          return json({ error: 'Variant not found' }, { status: 404 });
-        }
+  if (result.error) throw new FormValidationError(result.error);
 
-        const responseHeaders = new Headers();
-        const cart = await addToCart(request, {
-          variantId: variant.id!,
-          quantity,
-          metadata: { edition }
-        } as CartCreateLineItemInput);
+  const { productId, options, quantity } = payload;
 
-        await setCartId(responseHeaders, cart.cart.id);
+  const region = await getSelectedRegion(request.headers);
 
-        return json(
-          { cart: cart.cart },
-          { headers: responseHeaders }
-        );
-      } catch (error) {
-        console.error('Add to cart error:', error);
-        return json(
-          { error: 'Failed to add item to cart' },
-          { status: 500 }
-        );
-      }
-    }
+  const [product] = await getProductsById({
+    ids: [productId],
+    regionId: region.id,
+  }).catch(() => []);
 
-    case LineItemActions.UPDATE: {
-      const lineItemId = formData.get('lineItemId') as string;
-      const quantity = Number(formData.get('quantity'));
+  if (!product)
+    throw new FormValidationError({
+      fieldErrors: { formError: 'Product not found.' },
+    });
 
-      try {
-        const result = await updateLineItem(request, {
-          lineId: lineItemId,
-          quantity,
-        });
-        return json(result);
-      } catch (error) {
-        return json(
-          { error: 'Failed to update item' },
-          { status: 500 }
-        );
-      }
-    }
+  const variant = getVariantBySelectedOptions(product.variants || [], options);
 
-    case LineItemActions.DELETE: {
-      const lineItemId = formData.get('lineItemId') as string;
+  if (!variant)
+    throw new FormValidationError({
+      fieldErrors: {
+        formError: 'Product variant not found. Please select all required options.',
+      },
+    });
 
-      try {
-        await deleteLineItem(request, lineItemId);
-        const cart = await retrieveCart(request) as StoreCart;
-        return json({ cart });
-      } catch (error) {
-        return json(
-          { error: 'Failed to delete item' },
-          { status: 500 }
-        );
-      }
-    }
+  const responseHeaders = new Headers();
 
-    default:
-      return json(
-        { error: 'Invalid action' },
-        { status: 400 }
-      );
-  }
+  const { cart } = await addToCart(request, {
+    variantId: variant.id!,
+    quantity: parseInt(quantity, 10),
+  });
+
+  await setCartId(responseHeaders, cart.id);
+
+  return remixData({ cart }, { headers: responseHeaders });
+};
+
+const updateItem: ActionHandler<StoreCartResponse> = async (
+  { lineItemId, cartId, quantity }: UpdateLineItemRequestPayload,
+  { request },
+) => {
+  return await updateLineItem(request, {
+    lineId: lineItemId,
+    quantity: parseInt(quantity, 10),
+  });
+};
+
+const deleteItem: ActionHandler<StoreCartResponse> = async (
+  { lineItemId, cartId }: DeleteLineItemRequestPayload,
+  { request },
+) => {
+  await deleteLineItem(request, lineItemId);
+
+  const cart = (await retrieveCart(request)) as StoreCart;
+
+  return { cart };
+};
+
+const actions = {
+  createItem,
+  updateItem,
+  deleteItem,
+};
+
+export async function action(actionArgs: ActionFunctionArgs) {
+  return await handleAction({
+    actionArgs,
+    actions,
+  });
 }

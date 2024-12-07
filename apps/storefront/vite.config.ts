@@ -3,6 +3,7 @@ import { defineConfig } from 'vite';
 import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import { remixDevTools } from 'remix-development-tools';
+import { resolve } from 'path';
 
 declare module '@remix-run/server-runtime' {
   interface Future {
@@ -32,4 +33,10 @@ export default defineConfig({
     vanillaExtractPlugin(),
   ],
   build: {},
+  resolve: {
+    alias: {
+      '@app': resolve(__dirname, './app'),
+      '@libs': resolve(__dirname, './libs')
+    }
+  }
 });

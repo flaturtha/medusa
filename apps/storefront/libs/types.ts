@@ -2,17 +2,19 @@ import { BaseAddress, StoreDTO } from '@medusajs/types';
 import { BasePaymentSession } from '@medusajs/types/dist/http/payment/common';
 import { PaymentMethod as StripePaymentMethod } from '@stripe/stripe-js';
 
-export type NavigationItemLocation = 'main' | 'submenu' | 'footer';
+export enum NavigationItemLocation {
+  header = 'header',
+  footer = 'footer',
+}
 
 export interface NavigationItem {
-  id: number;
+  id: string;
   label: string;
   url: string;
-  new_tab: boolean;
-  location: NavigationItemLocation;
-  sort_order: number;
-  submenu?: NavigationItem[];
-  highlight?: boolean;
+  new_tab?: boolean;
+  sort_order?: number;
+  location?: NavigationItemLocation;
+  children?: NavigationItem[];
 }
 
 export type NavigationCollection = NavigationItem[];
@@ -61,7 +63,7 @@ export interface ProductListFilter {
   q?: string;
   collection_id?: string[];
   tags?: string[];
-  category_id?: string[];
+  category_id?: string;
   limit?: number;
   order?: string;
 }

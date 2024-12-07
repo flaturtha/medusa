@@ -19,48 +19,42 @@ export default function IndexRoute() {
   return (
     <>
       <Hero
-        className="h-[800px] !max-w-full -mt-[calc(var(--mkt-header-height)+3rem)] md:-mt-[calc(var(--mkt-header-height-desktop)+2rem)] pt-[calc(var(--mkt-header-height)+8rem)] md:pt-[calc(var(--mkt-header-height-desktop)+8rem)]"
+        className="h-[800px] !max-w-full -mt-[calc(var(--mkt-header-height)+3rem)] md:-mt-[calc(var(--mkt-header-height-desktop)+2rem)] pt-[var(--mkt-header-height)] md:pt-[var(--mkt-header-height-desktop)]"
         content={
-          <div className="text-center w-full space-y-9 mt-[calc(var(--mkt-header-height-desktop)+4rem)]">
-            <h4 className="font-display text-2xl">VINTAGE MURDER MYSTERY</h4>
-            <h1 className="text-8xl font-display">TALES OF MURDER</h1>
+          <div className="text-center w-full space-y-9">
+            <h4 className="font-italiana text-2xl">COFFEE & COMMUNITY</h4>
+            <h1 className="text-8xl font-aboreto">BARRIO</h1>
             <p className="max-w-prose mx-auto text-lg">
-              Step into the shadowy world of vintage crime fiction. Our curated collection brings 
-              you the finest detective stories, true crime narratives, and murder mysteries from 
-              the golden age of pulp fiction.
+              Discover our artisan-roasted coffee, crafted with care and delivered to your door. At Barrio, we’re more
+              than a coffee roastery—we’re&nbsp;a&nbsp;neighborhood.
             </p>
           </div>
         }
         actions={[
           {
-            label: 'Explore Collection',
-            url: '/products',
+            label: 'Discover Our Blends',
+            url: '/categories/blends',
           },
         ]}
         image={{
-          url: '/assets/images/old-cap-collier.png',
-          alt: 'Old Cap Collier vintage murder mystery cover',
+          url: '/assets/images/barrio-banner.png',
+          alt: 'Barrio background',
         }}
       />
 
       <Container className="p-14 md:pt-1 lg:pt-24 relative flex flex-col-reverse items-center lg:flex-row">
         <div className="md:absolute w-80 md:left-4 md:-top-[240px] lg:left-20 lg:w-[420px]">
-          <Image 
-            src="/assets/images/header-image-3.png" 
-            alt="Vintage detective novel cover" 
-            height={520} 
-            width={420} 
-          />
+          <Image src="/assets/images/header-image-1.png" alt="Barrio background" height={520} width={420} />
         </div>
 
         <div className="md:w-full flex flex-col justify-center max-md:items-center">
           <div className="w-full flex text-center md:text-left">
-            <h2 className="mx-auto md:ml-[32%] lg:ml-[37%] xl:ml-[30%] lg:mr-auto text-6xl sm:text-7xl lg:text-8xl xl:text-9xl font-display mt-12">
-              Timeless Tales
+            <h2 className="mx-auto md:ml-[32%] lg:ml-[37%] xl:ml-[30%] lg:mr-auto text-6xl sm:text-7xl lg:text-8xl xl:text-9xl font-ballet mt-12">
+              Building Community
             </h2>
           </div>
-          <p className="font-display text-6xl lg:text-7xl xl:text-8xl mt-6 lg:mt-8 xl:mt-10 max-sm:text-center">
-            of Mystery & Murder
+          <p className="font-italiana text-6xl lg:text-7xl xl:text-8xl mt-6 lg:mt-8 xl:mt-10 max-sm:text-center">
+            one cup at a time
           </p>
         </div>
       </Container>

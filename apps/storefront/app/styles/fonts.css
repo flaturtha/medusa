@@ -1,11 +1,5 @@
 /* Breamcatcher */
-@font-face {
-  font-family: 'Breamcatcher';
-  src: url('/fonts/Breamcatcher.woff2') format('woff2'),
-       url('/fonts/Breamcatcher.woff') format('woff');
-  font-weight: normal;
-  font-style: normal;
-}
+@import url('https://fonts.cdnfonts.com/css/breamcatcher');
 
 /* Crimson Text */
 @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600;700&display=swap');
