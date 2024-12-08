@@ -1,70 +1,52 @@
-import { 
-  AbstractNotificationProviderService
-} from "@medusajs/framework/utils"
-import { Logger } from "@medusajs/framework/types"
+import { AbstractNotificationService } from "@medusajs/medusa"
+import { Logger } from "@medusajs/types"
 import { Resend } from "resend"
 
 type NotificationData = {
   to: string
   data?: Record<string, unknown>
-  template?: string
 }
 
-type NotificationResult = {
-  id: string
-  response: { success: boolean }
-  content: {
-    to: string
-    subject?: string
-    html?: string
-  }
-}
+class ResendService extends AbstractNotificationService {
+  protected identifier = "resend"
+  protected resendClient: Resend
+  protected logger: Logger
 
-class ResendNotificationProviderService extends AbstractNotificationProviderService {
-  static identifier = "notification-resend"
-  private resendClient: Resend
-  private options: {
-    api_key: string
-    from: string
-  }
-  private logger: Logger
-
-  constructor(
-    { logger }: { logger: Logger }, 
-    options: { api_key: string; from: string }
-  ) {
+  constructor({ logger }, options) {
     super()
+    this.logger = logger
     this.resendClient = new Resend(options.api_key)
     this.options = options
-    this.logger = logger
   }
 
-  async send(
-    notification: NotificationData
-  ): Promise<NotificationResult> {
-    this.logger.debug(`Sending notification via Resend to ${notification.to}`)
-
-    if (!notification.to) {
-      throw new Error("No recipient provided")
-    }
+  async sendNotification(
+    event: string,
+    data: NotificationData,
+    attachmentGenerator: unknown
+  ): Promise<{ 
+    to: string; 
+    status: string; 
+    data: Record<string, unknown>; 
+  }> {
+    this.logger.debug(`Sending email via Resend to ${data.to}`)
 
     try {
-      const result = await this.resendClient.emails.send({
+      const response = await this.resendClient.emails.send({
         from: this.options.from,
-        to: notification.to,
-        subject: notification.data?.subject as string ?? "Notification",
-        html: notification.template ?? notification.data?.html as string ?? "",
+        to: data.to,
+        subject: data.data?.subject as string,
+        html: data.data?.html as string,
       })
 
-      this.logger.debug(`Email sent successfully with ID ${result.data.id}`)
+      this.logger.debug("Email sent successfully", response)
 
       return {
-        id: result.data.id,
-        response: { success: true },
-        content: {
-          to: notification.to,
-          subject: notification.data?.subject as string,
-          html: notification.template ?? notification.data?.html as string,
+        to: data.to,
+        status: "success",
+        data: {
+          ...data.data,
+          sent_at: new Date(),
+          response,
         },
       }
     } catch (error) {
@@ -72,14 +54,6 @@ class ResendNotificationProviderService extends AbstractNotificationProviderServ
       throw error
     }
   }
-
-  async sendNotification(
-    event: string,
-    data: NotificationData
-  ): Promise<NotificationResult> {
-    this.logger.debug(`Received notification event: ${event}`)
-    return this.send(data)
-  }
 }
 
-export default ResendNotificationProviderService 
+export default ResendService 
