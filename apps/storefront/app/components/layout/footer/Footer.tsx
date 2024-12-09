@@ -1,4 +1,4 @@
-import { objectToFormData } from '@libs/util/forms/objectToFormData';
+import { convertToFormData } from '@libs/util/forms/objectToFormData';
 import { useFetcher } from '@remix-run/react';
 import { Container } from '@app/components/common/container/Container';
 import { Select } from '@app/components/common/forms/inputs/Select';
@@ -32,7 +32,7 @@ export const Footer = () => {
 
   const onRegionChange = (regionId: string) => {
     fetcher.submit(
-      objectToFormData({
+      convertToFormData({
         regionId,
         subaction: RegionActions.CHANGE_REGION,
       }),

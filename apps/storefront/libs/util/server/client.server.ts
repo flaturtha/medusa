@@ -2,6 +2,7 @@ import Medusa from '@medusajs/js-sdk';
 import { config } from './config.server';
 import { buildNewLRUCache } from './cache-builder.server';
 
+// Defaults to standard port for Medusa server
 let MEDUSA_BACKEND_URL = 'http://localhost:9000';
 
 if (process.env.INTERNAL_MEDUSA_API_URL) {

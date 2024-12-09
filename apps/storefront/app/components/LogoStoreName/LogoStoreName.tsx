@@ -1,7 +1,7 @@
 import type { FC, PropsWithChildren } from 'react';
 import { Link } from '@remix-run/react';
 import clsx from 'clsx';
-import { useSiteDetails } from '../../hooks/useSiteDetails';
+import { useSiteDetails } from '@app/hooks/useSiteDetails';
 import { Image } from '@app/components/common/images/Image';
 
 const LogoHeader: FC<PropsWithChildren & { primary: boolean | undefined; className: string }> = ({
@@ -12,7 +12,6 @@ const LogoHeader: FC<PropsWithChildren & { primary: boolean | undefined; classNa
 
 export const LogoStoreName: FC<{ primary?: boolean; className?: string }> = ({ primary, className }) => {
   const { store, settings } = useSiteDetails();
-  console.log('LogoStoreName store:', store);
 
   if (!store || !settings) return null;
 
@@ -24,7 +23,7 @@ export const LogoStoreName: FC<{ primary?: boolean; className?: string }> = ({ p
       className={clsx('logo-header flex flex-nowrap items-center justify-center gap-x-2 gap-y-2 sm:gap-x-4', className)}
     >
       <LogoHeader primary={primary} className="xs:text-2xl whitespace-nowrap text-lg font-bold font-aboreto">
-        {store?.name || 'Store'}
+        {store?.name}
       </LogoHeader>
     </Link>
   );

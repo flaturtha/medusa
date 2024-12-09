@@ -8,6 +8,7 @@ import { SideBySide } from '@app/components/sections/SideBySide';
 import { GridCTA } from '@app/components/sections/GridCTA';
 import { ActionList } from '@app/components/common/actions-list/ActionList';
 import ProductList from '@app/components/sections/ProductList';
+import { mergeMeta } from '@libs/util/meta';
 
 export const loader = async (args: LoaderFunctionArgs) => {
   return {};
@@ -44,7 +45,13 @@ export default function IndexRoute() {
 
       <Container className="p-14 md:pt-1 lg:pt-24 relative flex flex-col-reverse items-center lg:flex-row">
         <div className="md:absolute w-80 md:left-4 md:-top-[240px] lg:left-20 lg:w-[420px]">
-          <Image src="/assets/images/header-image-1.png" alt="Barrio background" height={520} width={420} />
+          <Image
+            src="/assets/images/header-image-1.png"
+            loading="lazy"
+            alt="Barrio background"
+            height={520}
+            width={420}
+          />
         </div>
 
         <div className="md:w-full flex flex-col justify-center max-md:items-center">

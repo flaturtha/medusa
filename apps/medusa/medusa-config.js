@@ -37,20 +37,6 @@ module.exports = defineConfig({
       },
     },
     {
-      resolve: '@medusajs/notification',
-      options: {
-        providers: [
-          {
-            resolve: './src/modules/resend',
-            options: {
-              api_key: process.env.RESEND_API_KEY,
-              from: process.env.RESEND_FROM_EMAIL,
-            },
-          },
-        ],
-      },
-    },
-    {
       resolve: '@medusajs/medusa/cache-redis',
       options: {
         redisUrl: REDIS_URL,

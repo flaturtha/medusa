@@ -8,13 +8,12 @@ export enum NavigationItemLocation {
 }
 
 export interface NavigationItem {
-  id: string;
+  id: number;
   label: string;
   url: string;
-  new_tab?: boolean;
-  sort_order?: number;
-  location?: NavigationItemLocation;
-  children?: NavigationItem[];
+  new_tab: boolean;
+  location: NavigationItemLocation;
+  sort_order: number;
 }
 
 export type NavigationCollection = NavigationItem[];
@@ -63,7 +62,7 @@ export interface ProductListFilter {
   q?: string;
   collection_id?: string[];
   tags?: string[];
-  category_id?: string;
+  category_id?: string[];
   limit?: number;
   order?: string;
 }

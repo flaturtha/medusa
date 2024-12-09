@@ -8,24 +8,15 @@ import {
   useLoaderData,
   useRouteError,
 } from '@remix-run/react';
-import { json, type DataFunctionArgs, type MetaFunction } from '@remix-run/node';
-import Medusa from '@medusajs/medusa-js';
 import { useRef } from 'react';
 import { Page } from './components/layout/Page';
 import { RootProviders } from './providers/root-providers';
+import { MetaFunction } from '@remix-run/node';
+import { getCommonMeta, mergeMeta } from '@libs/util/meta';
+import { getRootLoader } from '@libs/util/server/root.server';
+
 import '@app/styles/global.css';
 import { useRootLoaderData } from './hooks/useRootLoaderData';
-import { headerNavigationItems } from '../libs/config/site/navigation-items';
-import { sdk } from '@libs/util/server/client.server';
-import { getSelectedRegion } from '@libs/util/server/data/regions.server';
-
-// Simple meta utility functions to replace missing @libs/util/meta
-const getCommonMeta = () => [];
-const mergeMeta = (commonMeta: any, pageMeta: any) => {
-  return ({ data }: { data: any }) => {
-    return [...(commonMeta()), ...(pageMeta({ data }) || [])];
-  };
-};
 
 export const getRootMeta: MetaFunction = ({ data }) => {
   const title = 'Barrio Store';
@@ -45,59 +36,9 @@ export const getRootMeta: MetaFunction = ({ data }) => {
   ];
 };
 
-export const meta: MetaFunction = mergeMeta(getCommonMeta, getRootMeta);
+export const meta: MetaFunction<typeof loader> = mergeMeta(getCommonMeta, getRootMeta);
 
-export const loader = async ({ request }: DataFunctionArgs) => {
-  const baseUrl = process.env.MEDUSA_BACKEND_URL || 'http://localhost:9000';
-  
-  try {
-    const region = await getSelectedRegion(request.headers);
-    
-    // Use the same SDK pattern as products
-    const storeData = await sdk.store.retrieve({
-      region_id: region.id,
-    });
-
-    console.log('Store SDK Response:', storeData);
-
-    return json({
-      env: {
-        MEDUSA_BACKEND_URL: baseUrl,
-      },
-      siteDetails: {
-        store: storeData.store,
-        settings: {
-          storefront_url: baseUrl
-        },
-        headerNavigationItems
-      },
-      regions: [region],
-      region
-    });
-  } catch (error) {
-    console.error('Store fetch error:', error);
-    
-    // NOTE: Known limitation - Store name falls back to "Tales of Murder" when store API
-    // is unavailable. This is a design decision from the starter template.
-    // The fallback ensures consistent branding even when the store API fails.
-    return json({
-      env: {
-        MEDUSA_BACKEND_URL: baseUrl,
-      },
-      siteDetails: {
-        store: {
-          name: 'Tales of Murder'
-        },
-        settings: {
-          storefront_url: baseUrl
-        },
-        headerNavigationItems
-      },
-      regions: [{ id: 'default', name: 'Default Region', currency_code: 'usd' }],
-      region: { id: 'default', name: 'Default Region', currency_code: 'usd' }
-    });
-  }
-};
+export const loader = getRootLoader;
 
 export const shouldRevalidate: ShouldRevalidateFunction = ({
   actionResult,

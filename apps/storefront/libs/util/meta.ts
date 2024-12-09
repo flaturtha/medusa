@@ -60,22 +60,19 @@ export const getParentMeta: MetaFunction = ({ matches }) =>
 export const getCommonMeta: MetaFunction = ({ matches }) => {
   const rootMatch = matches[0] as UIMatch<RootLoaderResponse>;
   const currentMatch: MetaMatch = matches?.[matches?.length - 1];
+
   const siteDetails = rootMatch.data?.siteDetails;
 
-  const commonMeta = [
-    { charset: 'utf-8' },
-    {
-      name: 'viewport',
-      content: 'width=device-width, initial-scale=1.0, height=device-height, user-scalable=0',
-    }
-  ];
-
-  if (!siteDetails?.store?.name) return commonMeta;
+  if (!siteDetails) return [];
 
   const canonicalUrl = `${siteDetails.settings.storefront_url}${currentMatch.pathname}`;
 
   return [
-    ...commonMeta,
+    { charset: 'utf-8' },
+    {
+      name: 'viewport',
+      content: 'width=device-width, initial-scale=1.0, height=device-height, user-scalable=0',
+    },
     { property: 'og:url', content: canonicalUrl },
     { property: 'og:type', content: 'website' },
     { property: 'og:site_name', content: siteDetails.store.name },
